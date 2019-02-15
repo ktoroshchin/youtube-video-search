@@ -1,37 +1,47 @@
 import React from 'react';
 import SearchBar from './SearchBar';
 import VideoList from './VideoList';
-import axios from 'axios';
+import VideoDetail from './VideoDetail';
 import youtube from '../apis/youtube';
+
 
 
 class App extends React.Component {
     state = {
         videos: [],
-        selectedVideo: null
-    }
+        selectedVideo: null,
+    };
     onTermSubmit = async (term) => {
         const response = await youtube.get('/search',{
             params: {
                 q: term
             }
-        })
+        });
        this.setState({
            videos: response.data.items
        })
     };
 
     onVideoSelect = (video) => {
-        console.log("this is ap:", video)
-    }
+        this.setState({selectedVideo: video})
+    };
 
 
 
     render(){
         return(
             <div className="ui container">
-             <SearchBar onTermSubmit={this.onTermSubmit}/>
-             <VideoList onVideoSelect={this.onVideoSelect} videos={this.state.videos}/>
+                <SearchBar onTermSubmit={this.onTermSubmit}/>
+                <div className="ui grid">
+                    <div className="ui row">
+                        <div className="eleven wide column">
+                            <VideoDetail video={this.state.selectedVideo}/>
+                        </div>
+                        <div className="five wide column">
+                            <VideoList onVideoSelect={this.onVideoSelect} videos={this.state.videos}/>
+                        </div>
+                    </div>
+                </div>
             </div>
         )
     }
